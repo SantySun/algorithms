@@ -1,4 +1,5 @@
 from random import shuffle
+from re import A
 
 class Sort:
     def __init__(self) -> None:
@@ -14,7 +15,18 @@ class Sort:
     
     @classmethod
     def selection_sort(self, list):
-        pass
+        def get_max_index(list, start, end):
+            assert end > start
+            max_index = start
+            for i in range(start + 1, end):
+                if list[i] > list[max_index]:
+                    max_index = i
+            return max_index
+        
+        for i in range(len(list), 1, -1):
+            max_index = get_max_index(list, 0, i)
+            list[max_index], list[i - 1] = list[i - 1], list[max_index]
+
 
     @classmethod
     def quick_sort(self, list):
@@ -41,3 +53,4 @@ def test(func):
 
 
 test(Sort.bubble_sort)
+test(Sort.selection_sort)
