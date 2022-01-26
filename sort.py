@@ -41,7 +41,7 @@ class Sort:
                 left_mark = start + 1
                 right_mark = end
                 pivot_element = list[start]
-                while left_mark <= right_mark:
+                while True:
                     while left_mark <= right_mark and list[left_mark] <= pivot_element:
                         left_mark = left_mark + 1
                     while left_mark <= right_mark and list[right_mark] >= pivot_element:
