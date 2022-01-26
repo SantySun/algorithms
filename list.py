@@ -2,8 +2,8 @@ import unittest
 
 class Stack:
   def __init__(self) -> None:
-      self.length = 0
-      self.elements = []
+    self.length = 0
+    self.elements = []
   
   def __len__(self):
     return self.length
@@ -130,9 +130,9 @@ class LinkedListTest(unittest.TestCase):
 
 class Element:
   def __init__(self, val) -> None:
-      self.val = val
-      self.next = None
-      self.prev = None
+    self.val = val
+    self.next = None
+    self.prev = None
 
 class FIFOQueue:
   def __init__(self, node: Element) -> None:
@@ -225,9 +225,6 @@ class Dequeue(FIFOQueue):
     self.length += 1
 
   def pop_front(self):
-    '''
-    Needs to be fixed, pop the last element will fail
-    '''
     if self.length == 0:
       raise IndexError
     popped = self.head.val
