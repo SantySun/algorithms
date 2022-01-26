@@ -1,21 +1,16 @@
 from random import shuffle
-from re import A
 
 class Sort:
-    def __init__(self) -> None:
-        pass
-    
     @classmethod
     def bubble_sort(self, list):
         for i in range(len(list), 0, -1):
-            # from the last element to the first element
             for j in range(1, i):
                 if list[j - 1] > list[j]:
                     list[j - 1], list[j] = list[j], list[j - 1]
     
     @classmethod
     def selection_sort(self, list):
-        def get_max_index(list, start, end):
+        def _get_max_index(list, start, end):
             assert end > start
             max_index = start
             for i in range(start + 1, end):
@@ -24,8 +19,17 @@ class Sort:
             return max_index
         
         for i in range(len(list), 1, -1):
-            max_index = get_max_index(list, 0, i)
+            max_index = _get_max_index(list, 0, i)
             list[max_index], list[i - 1] = list[i - 1], list[max_index]
+
+    @classmethod
+    def insertion_sort(self, list):
+        for i in range(1, len(list)):
+            position = i
+
+            while list[position] < list[position - 1] and position > 0:
+                list[position], list[position - 1] = list[position - 1], list[position]
+                position = position - 1
 
 
     @classmethod
@@ -54,3 +58,4 @@ def test(func):
 
 test(Sort.bubble_sort)
 test(Sort.selection_sort)
+test(Sort.insertion_sort)
