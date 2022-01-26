@@ -1,5 +1,4 @@
 from random import shuffle
-from re import I
 import unittest
 
 
@@ -45,7 +44,7 @@ class Sort:
                 while left_mark <= right_mark:
                     while left_mark <= right_mark and list[left_mark] <= pivot_element:
                         left_mark = left_mark + 1
-                    while  left_mark <= right_mark and list[right_mark] >= pivot_element:
+                    while left_mark <= right_mark and list[right_mark] >= pivot_element:
                         right_mark = right_mark - 1
 
                     if left_mark > right_mark:
