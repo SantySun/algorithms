@@ -26,11 +26,11 @@ class Sort:
     def insertion_sort(self, list):
         for i in range(1, len(list)):
             position = i
-
-            while list[position] < list[position - 1] and position > 0:
-                list[position], list[position - 1] = list[position - 1], list[position]
+            insert_value = list[i]
+            while insert_value < list[position - 1] and position > 0:
+                list[position] = list[position - 1]
                 position = position - 1
-
+            list[position] = insert_value
 
     @classmethod
     def quick_sort(self, list):
@@ -38,7 +38,19 @@ class Sort:
 
     @classmethod
     def shell_sort(self, list):
-        pass
+        def _gap_insertion_sort(list, start, gap):
+            for i in range(start + gap, len(list), gap):
+                position = i
+                insert_value = list[i]
+                while insert_value < list[position - gap] and position >= gap:
+                    list[position] = list[position - gap]
+                    position = position - gap
+                list[position] = insert_value
+        gap = len(list) // 2
+        while gap > 0:
+            for start_position in range(gap):
+                _gap_insertion_sort(list, start_position, gap)
+            gap = gap // 2
 
     @classmethod
     def merge_sort(self, list):
@@ -52,10 +64,15 @@ def test(func):
     func(nums)
 
     for i in range(1, 101):
-        assert i == nums[i - 1]
+        try:
+            assert i == nums[i - 1]
+        except:
+            print("expect:", i, "actual:", nums[i - 1])
+            return
     print("Test Successful:", func.__name__)
 
 
 test(Sort.bubble_sort)
 test(Sort.selection_sort)
 test(Sort.insertion_sort)
+test(Sort.shell_sort)
