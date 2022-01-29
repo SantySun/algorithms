@@ -12,6 +12,11 @@ class Stack:
     self.elements.append(obj)
     self.length = self.length + 1
   
+  def read(self):
+    if self.length == 0:
+      return None
+    return self.elements[0]
+  
   def pop(self):
     if self.length == 0:
       raise Exception(message="Stack is empty, pop not allowed.")
@@ -135,15 +140,17 @@ class Element:
     self.prev = None
 
 class FIFOQueue:
-  def __init__(self, node: Element) -> None:
+  def __init__(self, n: any) -> None:
+    node = Element(n)
     self.head = node
     self.tail = node
     self.length = 1
 
-  def append(self, node: Element):
+  def append(self, n: any):
     if self.length ==  0:
-      self.__init__(node)
+      self.__init__(n)
     else:
+      node = Element(n)
       self.tail.next = node
       node.prev = self.tail
       self.tail = node
