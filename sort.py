@@ -1,6 +1,7 @@
 from random import shuffle
 import unittest
-
+from time import time
+from matplotlib import pyplot as plt
 
 class Sort:
     @classmethod
@@ -138,7 +139,40 @@ class SortTest(unittest.TestCase):
         Sort.quick_sort(self.nums)
         self.assertListEqual(self.nums, self.sorted_nums)
 
+class Plot:
+    def __init__(self) -> None:
+        self.numbers = [i for i in range(1000)]
+        self.plots = []
+        shuffle(self.numbers)
+
+    def add_plot_line(self, func):
+        print("Executing...", func.__name__)
+        x = []
+        y = []
+        for i in range(10, 1000, 10):
+            start = time()
+            func(self.numbers[:i])
+            time_cost = time() - start
+
+            x.append(i)
+            y.append(time_cost * 1000)
+        self.plots.append((x, y, func.__name__))
+
+    def plot(self):
+        fig, ax = plt.subplots()
+        for x, y, function_name in self.plots:
+            ax.plot(x, y, label=function_name)
+        ax.legend()
+        plt.show()
+
+
+
+
 
 if __name__ == '__main__':
+    plot = Plot()
+    for func in [Sort.quick_sort, Sort.shell_sort, Sort.merge_sort, Sort.selection_sort, Sort.insertion_sort, Sort.bubble_sort]:
+        plot.add_plot_line(func)
+    plot.plot()
     unittest.main()
 
