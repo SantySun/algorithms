@@ -52,11 +52,13 @@ class Node:
       return f'{self.val} -> {self.next.val}'
   
 class LinkedList:
-  def __init__(self, node: Node) -> None:
+  def __init__(self, n: any) -> None:
+    node = Node(n)
     self.head = node
     self.length = 1
 
-  def append(self, node: Node) -> None:
+  def append(self, n: any) -> None:
+    node = Node(n)
     current = self.head
     while current.next:
       current = current.next
@@ -64,30 +66,38 @@ class LinkedList:
     self.length = self.length + 1
 
   def __add__(self, linked_list):
+    result = LinkedList(self.head.val)
     current = self.head
+    current_result_node = result.head
     while current.next:
+      result.append(current.next.val)
       current = current.next
-    current.next = linked_list.head
-    self.length = self.length + linked_list.length
-    return self
+      current_result_node = current_result_node.next
+    current_result_node.next = linked_list.head
+    return result
 
   def pop(self, position=None):
     assert position == None or type(position) == int
+    result = None
     if position is None:
       current = self.head
       while current.next and current.next.next:
         current = current.next
+      result = current.next.val
       current.next = None
     elif position >= self.length:
       raise IndexError
     else:
       if position == 0:
+        result = self.head.val
         self.head = self.head.next
       else:
         current = self.head
         for _ in range(position - 1):
           current = current.next
+        result = current.next.val
         current.next = current.next.next
+    return result
   
   def __str__(self) -> str:
     current = self.head
@@ -99,35 +109,35 @@ class LinkedList:
 
 class LinkedListTest(unittest.TestCase):
   def setUp(self) -> None:
-    self.list_1 = LinkedList(Node(0))   
+    self.list_1 = LinkedList(0)   
   
   def test_append(self):
-    self.list_1.append(Node('a'))
-    self.list_1.append(Node('b'))
-    self.list_1.append(Node(99))
+    self.list_1.append('a')
+    self.list_1.append('b')
+    self.list_1.append(99)
     self.assertEqual(str(self.list_1), '0->a->b->99')
   
   def test_add(self):
-    l2 = LinkedList(Node('a'))
-    l2.append(Node('b'))
-    l2.append(Node("c"))
-    self.list_1.append(Node(1))
-    self.list_1.append(Node(2))
+    l2 = LinkedList('a')
+    l2.append('b')
+    l2.append("c")
+    self.list_1.append(1)
+    self.list_1.append(2)
     self.assertEqual(str(self.list_1 + l2), '0->1->2->a->b->c')
   
   def test_pop(self):
     for i in range(1, 5):
-      self.list_1.append(Node(i))
-    self.list_1.pop()
+      self.list_1.append(i)
+    self.assertEqual(self.list_1.pop(), 4)
     self.assertEqual(str(self.list_1), '0->1->2->3')
-    self.list_1.pop(0)
+    self.assertEqual(self.list_1.pop(0), 0)
     self.assertEqual(str(self.list_1), '1->2->3')
     
     with self.assertRaises(IndexError):
       self.list_1.pop(5)
     
-    self.list_1.append(Node(4))
-    self.list_1.append(Node(5))
+    self.list_1.append(4)
+    self.list_1.append(5)
     self.list_1.pop(2)
     self.assertEqual(str(self.list_1), '1->2->4->5')
     self.list_1.pop(3)
@@ -182,18 +192,18 @@ class FIFOQueue:
 
 class FIFOQueueTest(unittest.TestCase):
   def setUp(self) -> None:
-    self.queue = FIFOQueue(Element(0))
+    self.queue = FIFOQueue(0)
   
   def test_append(self):
-    self.queue.append(Element('a'))
-    self.queue.append(Element('b'))
-    self.queue.append(Element(99))
+    self.queue.append('a')
+    self.queue.append('b')
+    self.queue.append(99)
     self.assertEqual(self.queue.tail.val, 99)
     self.assertEqual(str(self.queue), '0->a->b->99')
 
   def test_pop(self):
     for i in range(1, 5):
-      self.queue.append(Element(i))
+      self.queue.append(i)
     self.assertEqual(self.queue.pop(), 4)
     self.assertEqual(self.queue.tail.val, 3)
     self.assertEqual(self.queue.pop(), 3)
@@ -210,21 +220,22 @@ class FIFOQueueTest(unittest.TestCase):
 
   def test_length(self):
     for i in range(1, 5):
-      self.queue.append(Element(i))
+      self.queue.append(i)
     self.assertEqual(len(self.queue), 5)
     self.queue.pop()
     self.assertEqual(len(self.queue), 4)
     self.queue.pop()
     self.queue.pop()
     self.assertEqual(len(self.queue), 2)
-    self.queue.append(Element("a"))
+    self.queue.append("a")
     self.assertEqual(len(self.queue), 3)
 
 class Dequeue(FIFOQueue):
-  def __init__(self, node: Element) -> None:
-    super().__init__(node)
+  def __init__(self, n: any) -> None:
+    super().__init__(n)
   
-  def append_front(self, node: Element):
+  def append_front(self, n: any):
+    node = Element(n)
     old_head = self.head
     old_head.prev = node
     node.next = old_head
@@ -246,18 +257,18 @@ class Dequeue(FIFOQueue):
 
 class DequeueTest(FIFOQueueTest):
   def setUp(self):
-    self.queue = Dequeue(Element(0))
+    self.queue = Dequeue(0)
 
   def test_append_front(self):
-    self.queue.append_front(Element(-1))
+    self.queue.append_front(-1)
     self.assertEqual(self.queue.head.val, -1)
-    self.queue.append_front(Element(-2))
+    self.queue.append_front(-2)
     self.assertEqual(self.queue.head.val, -2)
     self.assertEqual(self.queue.head.next.val, -1)
   
   def test_pop_front(self):
     for i in range(1, 5):
-      self.queue.append(Element(i))
+      self.queue.append(i)
     self.assertEqual(self.queue.pop_front(), 0)
     self.assertEqual(self.queue.tail.val, 4)
     self.assertEqual(self.queue.pop_front(), 1)
@@ -274,7 +285,7 @@ class DequeueTest(FIFOQueueTest):
   
   def test_length(self):
     super().test_length()
-    self.queue.append_front(Element(-1))
+    self.queue.append_front(-1)
     self.assertEqual(len(self.queue), 4)
     self.queue.pop_front()
     self.assertEqual(len(self.queue), 3)
