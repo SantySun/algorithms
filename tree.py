@@ -38,19 +38,6 @@ class BinaryTree:
       t = BinaryTree(val)
       t.right = self.get_right_child()
       self.right = t
-  
-  def random_populate(self, val):
-    action = random.choice(['left', 'right'])
-    if action == 'left':
-      if self.left:
-        self.left.random_populate(val)
-      else:
-        self.insert_left(val)
-    else:
-      if self.right:
-        self.right.random_populate(val)
-      else:
-        self.insert_right(val)
 
 
 class TreeSearch:
@@ -86,9 +73,6 @@ class TreeSearch:
     return _iterative_helper(tree)
 
 
-  def BFS_recursive(self, tree):
-    pass
-
   def BFS_iterative(self, tree):
     def _iterative_helper(tree, path=self.path):
       queue = FIFOQueue((tree, path))
@@ -109,14 +93,30 @@ class DFSTest(unittest.TestCase):
     node_values = [i for i in range(1, 1000)]
     random.shuffle(node_values)
     for v in node_values:
-      self.tree.random_populate(v)
+      self.random_populate(self.tree, v)
     return super().setUp()
+  
+  def random_populate(self, tree, val):
+    action = random.choice(['left', 'right'])
+    if action == 'left':
+      if tree.left:
+        self.random_populate(tree.left, val)
+      else:
+        tree.insert_left(val)
+    else:
+      if tree.right:
+        self.random_populate(tree.right, val)
+      else:
+        tree.insert_right(val)
 
   def test_DFS_search(self):
     task = TreeSearch(50)
     dfs_i = task.DFS_iterative(self.tree)
     dfs_r = task.DFS_recursive(self.tree)
     bfs_i = task.BFS_iterative(self.tree)
+    print("DFS_Iterative:", dfs_i)
+    print("DFS_Recursive:", dfs_r)
+    print("BFS_Iterative:", bfs_i)
     self.assertEqual(dfs_i, dfs_r)
     self.assertEqual(bfs_i, dfs_r)
     
