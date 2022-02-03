@@ -87,6 +87,81 @@ class TreeSearch:
     return _iterative_helper(tree)
 
 
+class Traversal:
+  def __init__(self, tree) -> None:
+    self.tree = tree
+  
+  def inorder_recursive(self):
+    result = []
+    def _inorder_helper(tree):
+      if tree.left:
+        _inorder_helper(tree.left)
+      result.append(tree.get_root_val())
+      if tree.right:
+        _inorder_helper(tree.right)
+    _inorder_helper(self.tree)
+    return result
+
+  def inorder_iterative(self):
+    result = []
+    stack = []
+    cur = self.tree
+    while len(stack) or cur:
+      if cur:
+        stack.append(cur)
+        cur = cur.left
+      else:
+        cur = stack.pop()
+        result.append(cur.val)
+        cur = cur.right
+    return result
+  
+  def preorder_recursive(self):
+    result = []
+    def _preorder_helper(tree):
+      result.append(tree.get_root_val())
+      if tree.left:
+        _preorder_helper(tree.left)
+      if tree.right:
+        _preorder_helper(tree.right)
+    _preorder_helper(self.tree)
+    return result
+
+  def preorder_iterative(self):
+    result = []
+    stack = [self.tree]
+    while len(stack):
+      cur = stack.pop()
+      result.append(cur.val)
+      if cur.right:
+        stack.append(cur.right)
+      if cur.left:
+        stack.append(cur.left)
+    return result
+
+  def postorder_recursive(self):
+    result = []
+    def _postorder_helper(tree):
+      if tree.left:
+        _postorder_helper(tree.left)
+      if tree.right:
+        _postorder_helper(tree.right)
+      result.append(tree.get_root_val())
+    _postorder_helper(self.tree)
+    return result
+  
+  def postorder_iterative(self):
+    stack = [self.tree]
+    result = []
+    while len(stack):
+      cur = stack.pop()
+      result.append(cur.val)
+      if cur.left:
+        stack.append(cur.left)
+      if cur.right:
+        stack.append(cur.right)
+    return result[::-1]
+
 class DFSTest(unittest.TestCase):
   def setUp(self) -> None:
     self.tree = BinaryTree(0)
@@ -119,6 +194,12 @@ class DFSTest(unittest.TestCase):
     print("BFS_Iterative:", bfs_i)
     self.assertEqual(dfs_i, dfs_r)
     self.assertEqual(bfs_i, dfs_r)
+
+  def test_inorder_traveral(self):
+    traversal = Traversal(self.tree)
+    self.assertListEqual(traversal.inorder_iterative(), traversal.inorder_recursive())
+    self.assertListEqual(traversal.preorder_iterative(), traversal.preorder_recursive())
+    self.assertListEqual(traversal.postorder_iterative(), traversal.postorder_recursive())
     
 
 if __name__ == "__main__":
