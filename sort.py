@@ -2,6 +2,11 @@ from random import shuffle
 import unittest
 from time import time
 from matplotlib import pyplot as plt
+import sys
+
+sys.path.append('.')
+
+from heap import MinHeap
 
 class Sort:
     @classmethod
@@ -104,6 +109,15 @@ class Sort:
                 list_position = list_position + 1
                 right_half_index = right_half_index + 1
 
+    @classmethod
+    def heap_sort(self, list):
+        heap = MinHeap()
+        heap.build_heap(list)
+        i = 0
+        while heap.currrent_size > 0:
+            list[i] = heap.pop()
+            i += 1
+
 
 class SortTest(unittest.TestCase):
     nums = [i for i in range(1, 101)]
@@ -138,6 +152,11 @@ class SortTest(unittest.TestCase):
     def test_quick_sort(self):
         Sort.quick_sort(self.nums)
         self.assertListEqual(self.nums, self.sorted_nums)
+    
+    def test_heap_sort(self):
+        Sort.heap_sort(self.nums)
+        self.assertListEqual(self.nums, self.sorted_nums)
+
 
 class Plot:
     def __init__(self) -> None:
@@ -161,7 +180,7 @@ class Plot:
     def plot(self):
         fig, ax = plt.subplots()
         for x, y, function_name in self.plots:
-            ax.plot(x, y, label=function_name)
+            ax.plot(x, y, dashes=[2,2,2], label=function_name)
         ax.legend()
         plt.show()
 
@@ -171,7 +190,7 @@ class Plot:
 
 if __name__ == '__main__':
     plot = Plot()
-    for func in [Sort.quick_sort, Sort.shell_sort, Sort.merge_sort, Sort.selection_sort, Sort.insertion_sort, Sort.bubble_sort]:
+    for func in [Sort.quick_sort, Sort.shell_sort, Sort.merge_sort, Sort.selection_sort, Sort.insertion_sort, Sort.bubble_sort, Sort.heap_sort]:
         plot.add_plot_line(func)
     plot.plot()
     unittest.main()

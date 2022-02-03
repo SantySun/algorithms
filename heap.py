@@ -1,9 +1,5 @@
 import random
 import unittest
-import sys
-
-sys.path.append('.')
-from sort import Sort
 
 class MinHeap:
   def __init__(self) -> None:
@@ -63,13 +59,6 @@ class MinHeapTest(unittest.TestCase):
     self.heap = MinHeap()
     self.heap.build_heap(self.heap_list)
     return super().setUp()
-  
-  def test_heap_sort(self):
-    sorted_list = []
-    while self.heap.currrent_size > 0:
-      sorted_list.append(self.heap.pop())
-    Sort.merge_sort(self.heap_list)
-    self.assertListEqual(sorted_list, self.heap_list)
   
   def test_heap_pop(self):
     self.new_heap = MinHeap()
