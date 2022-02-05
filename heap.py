@@ -11,15 +11,15 @@ class MinHeap:
       self.heap_list = [0] + heap_list[:]
       i = self.currrent_size // 2
       while i > 0:
-        self._perc_down(i)
+        self.__perc_down(i)
         i -= 1
 
   def insert(self, val):
       self.heap_list.append(val)
       self.currrent_size += 1
-      self._perc_up(self.currrent_size)
+      self.__perc_up(self.currrent_size)
 
-  def _perc_up(self, i):
+  def __perc_up(self, i):
     while i // 2 > 0:
       if self.heap_list[i] < self.heap_list[ i // 2]:
         self.heap_list[i], self.heap_list[i // 2] = self.heap_list[i // 2], self.heap_list[i]
@@ -34,19 +34,19 @@ class MinHeap:
     self.heap_list[1] = self.heap_list[self.currrent_size]
     self.heap_list.pop()
     self.currrent_size -= 1
-    self._perc_down(1)
+    self.__perc_down(1)
     return min_val
   
-  def _perc_down(self, i):
+  def __perc_down(self, i):
     while i * 2 <= self.currrent_size:
-      min_child = self._min_child(i);
+      min_child = self.__min_child(i);
       if self.heap_list[i] > self.heap_list[min_child]:
         self.heap_list[i], self.heap_list[min_child] = self.heap_list[min_child], self.heap_list[i]
         i = min_child
       else:
         break
   
-  def _min_child(self, i):
+  def __min_child(self, i):
     if i * 2 + 1 > self.currrent_size:
       return i * 2
     return i * 2 if self.heap_list[i * 2] <= self.heap_list[i * 2 + 1] else i * 2 + 1

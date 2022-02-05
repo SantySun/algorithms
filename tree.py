@@ -195,7 +195,7 @@ class DFSTest(unittest.TestCase):
     self.assertEqual(dfs_i, dfs_r)
     self.assertEqual(bfs_i, dfs_r)
 
-  def test_inorder_traveral(self):
+  def test_traveral(self):
     traversal = Traversal(self.tree)
     self.assertListEqual(traversal.inorder_iterative(), traversal.inorder_recursive())
     self.assertListEqual(traversal.preorder_iterative(), traversal.preorder_recursive())
