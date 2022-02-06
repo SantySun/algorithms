@@ -1,5 +1,5 @@
 from typing import Any, List
-from unittest import TestCase, main
+from unittest import TestCase
 import sys
 
 sys.path.append('.')
@@ -134,7 +134,9 @@ class TSP(Graph):
   def __calc_distance(self, u: Vertex, v: Vertex):
     return ((u.data[0] - v.data[0])**2 + (u.data[1] - v.data[1])**2)**0.5
   
-  def DFS(self, start_vertex):
+  def DFS(self, start_vertex=None):
+    if not start_vertex:
+      start_vertex = self.vertices[0]
     paths = []
     def __DFS_helper(graph, current, visited_vertices={}, path=None, total_cost=0):
       if not visited_vertices:
@@ -148,15 +150,18 @@ class TSP(Graph):
         if len([v for v in new_visited.values() if v]) == self.vertices_count():
           final_path = new_path + " -> " + str(start_vertex.data)
           final_cost = total_cost + self.get_edge(current, start_vertex).cost
-          paths.append((final_path, final_cost))
-        adj_vertices = [e.opposite(current) for e in graph.incident_edges(current)]
-        for v in adj_vertices:
-          __DFS_helper(graph, v, new_visited, new_path, total_cost + self.get_edge(current, v).cost)
+          if not paths:
+            paths.append((final_path, final_cost))
+          elif paths[0][1] > final_cost:
+            paths[0] = (final_path, final_cost)
+        else:
+          adj_vertices = [e.opposite(current) for e in graph.incident_edges(current)]
+          for v in adj_vertices:
+            __DFS_helper(graph, v, new_visited, new_path, total_cost + self.get_edge(current, v).cost)
     __DFS_helper(self, start_vertex)
-    paths.sort(key=lambda x: x[1])
     optimum_path = paths[0]
     print(f'best route is {optimum_path[0]}, and total distance is {optimum_path[1]}')
-    return paths
+    return optimum_path
 
 
 class GraphTraversalTest(TestCase):
@@ -179,4 +184,4 @@ class GraphTraversalTest(TestCase):
 
 if __name__ == '__main__':
   tsp = TSP([(0, 0), (1, 1), (1, 0), (0, 1), (2,2), (3,4), (5,6), (7,8)])
-  tsp.DFS(tsp.vertices[0])
+  tsp.DFS()
