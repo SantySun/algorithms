@@ -169,10 +169,10 @@ class FIFOQueue:
   def pop(self):
     if self.length == 0:
       raise IndexError
-    popped = self.tail.val
-    if self.tail.prev:
-      self.tail = self.tail.prev
-      self.tail.next = None
+    popped = self.head.val
+    if self.head.next:
+      self.head = self.head.next
+      self.head.prev = None
     else:
       self.head = None
       self.tail = None
@@ -204,11 +204,11 @@ class FIFOQueueTest(unittest.TestCase):
   def test_pop(self):
     for i in range(1, 5):
       self.queue.append(i)
-    self.assertEqual(self.queue.pop(), 4)
-    self.assertEqual(self.queue.tail.val, 3)
-    self.assertEqual(self.queue.pop(), 3)
-    self.assertEqual(self.queue.pop(), 2)
+    self.assertEqual(self.queue.pop(), 0)
+    self.assertEqual(self.queue.tail.val, 4)
     self.assertEqual(self.queue.pop(), 1)
+    self.assertEqual(self.queue.pop(), 2)
+    self.assertEqual(self.queue.pop(), 3)
 
   def test_pop_empty(self):
     self.queue.pop()
@@ -242,13 +242,13 @@ class Dequeue(FIFOQueue):
     self.head = node
     self.length += 1
 
-  def pop_front(self):
+  def pop_tail(self):
     if self.length == 0:
       raise IndexError
-    popped = self.head.val
-    if self.head.next:
-      self.head = self.head.next
-      self.head.prev = None
+    popped = self.tail.val
+    if self.tail.prev:
+      self.tail = self.tail.prev
+      self.tail.next = None
     else:
       self.head = None
       self.tail = None
@@ -266,28 +266,28 @@ class DequeueTest(FIFOQueueTest):
     self.assertEqual(self.queue.head.val, -2)
     self.assertEqual(self.queue.head.next.val, -1)
   
-  def test_pop_front(self):
+  def test_pop_tail(self):
     for i in range(1, 5):
       self.queue.append(i)
-    self.assertEqual(self.queue.pop_front(), 0)
-    self.assertEqual(self.queue.tail.val, 4)
-    self.assertEqual(self.queue.pop_front(), 1)
-    self.assertEqual(self.queue.pop_front(), 2)
-    self.assertEqual(self.queue.pop_front(), 3)
+    self.assertEqual(self.queue.pop_tail(), 4)
+    self.assertEqual(self.queue.tail.val, 3)
+    self.assertEqual(self.queue.pop_tail(), 3)
+    self.assertEqual(self.queue.pop_tail(), 2)
+    self.assertEqual(self.queue.pop_tail(), 1)
 
-  def test_pop_front_empty(self):
-    self.queue.pop_front()
+  def test_pop_tail_empty(self):
+    self.queue.pop_tail()
     self.assertEqual(self.queue.head, None)
     self.assertEqual(self.queue.tail, None)
     with self.assertRaises(IndexError):
-      self.queue.pop_front()
+      self.queue.pop_tail()
 
   
   def test_length(self):
     super().test_length()
     self.queue.append_front(-1)
     self.assertEqual(len(self.queue), 4)
-    self.queue.pop_front()
+    self.queue.pop_tail()
     self.assertEqual(len(self.queue), 3)
 
 
