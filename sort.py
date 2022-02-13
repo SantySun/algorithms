@@ -114,7 +114,7 @@ class Sort:
         heap = MinHeap()
         heap.build_heap(list)
         i = 0
-        while heap.currrent_size > 0:
+        while heap.current_size > 0:
             list[i] = heap.pop()
             i += 1
 

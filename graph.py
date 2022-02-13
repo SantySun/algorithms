@@ -4,6 +4,7 @@ import sys
 
 sys.path.append('.')
 from list import FIFOQueue
+from heap import MinHeap
 
 class Vertex:
   def __init__(self, data) -> None:
@@ -24,6 +25,9 @@ class Edge:
   
   def opposite(self, vertex):
     return self.origin if vertex is self.destination else self.destination
+
+  def __str__(self) -> str:
+    return f'{[self.origin.data]} --{self.cost if self.cost else ""}--> {[self.destination.data]}'
 
   def __hash__(self) -> int:
     return hash((self.origin, self.destination))
@@ -182,6 +186,150 @@ class GraphTraversalTest(TestCase):
     self.assertListEqual(result, [1,2,4,8,9,5,10,11,3,6,12,13,7,14,15])
 
 
+class PathNode:
+  def __init__(self, vertex, value, path) -> None:
+    self.vertex = vertex
+    self.cost = value
+    self.path = path
+  
+  def has_same_vertex(self, __o) -> bool:
+    return self.vertex is __o.vertex
+  
+  def __gt__(self, __o) -> bool:
+    return self.cost > __o.cost
+
+  def __lt__(self, __o) -> bool:
+    return self.cost < __o.cost
+
+  def __eq__(self, __o) -> bool:
+    # return self.cost == __o.cost
+    return  self.vertex is __o.vertex
+  
+  def __le__(self, __o) -> bool:
+    return self.__lt__(__o) or self.__eq__( __o)
+  
+  def __str__(self) -> str:
+    return f'Total Cost to {self.vertex.data}: {self.cost}, path: {self.path}'
+  
+
+class Dijkstra:
+  def __init__(self, graph: Graph, start: Vertex) -> None:
+    self.path = ""
+    self.graph = graph
+    assert start in graph.get_vertices()
+    self.start = start
+  
+  def solution(self):
+    nodes = []
+    path_node_map = {}
+    for v in self.graph.get_vertices():
+      if v is not self.start:
+        n = PathNode(v, sys.maxsize, "")
+      else:
+        n = PathNode(v, 0, f"{v.data}")
+      nodes.append(n)
+      path_node_map[v] = n
+    pq = MinHeap()
+    pq.build_heap(nodes)
+
+    while not pq.is_empty() > 0:
+      path_node = pq.pop()
+      adj_vertices = [
+        e.opposite(path_node.vertex) for e in self.graph.incident_edges(path_node.vertex)
+      ]
+      for v in adj_vertices:
+        new_cost = path_node.cost + self.graph.get_edge(path_node.vertex, v).cost
+        if path_node_map[v].cost > new_cost:
+          new_node = PathNode(v, new_cost, path_node.path + f" -> {v.data}")
+          pq.update(path_node_map[v], new_node)
+          path_node_map[v] = new_node
+    
+    return path_node_map
+
+class PrimNode:
+  def __init__(self, vertex: Vertex, precost, edge: Edge) -> None:
+    self.vertex = vertex
+    self.precost = precost
+    self.edge = edge
+    self.destination = edge.opposite(vertex)
+  
+  def __lt__(self, __o) -> bool:
+    return self.precost + self.edge.cost < __o.precost + __o.edge.cost
+  
+  def __eq__(self, __o) -> bool:
+    return self.precost + self.edge.cost == __o.precost + __o.edge.cost
+  
+  def __gt__(self, __o) -> bool:
+    return self.precost + self.edge.cost > __o.precost + __o.edge.cost
+  
+  def __le__(self, __o) -> bool:
+    return self.__lt__(__o) or self.__eq__(__o)
+class PrimJarnik:
+  def __init__(self, graph: Graph) -> None:
+    self.graph = graph
+  
+  def solution(self, starting_index=0):
+    visited_vertices = {}
+    solution_edges = []
+    for i, v in enumerate(self.graph.get_vertices()):
+      visited_vertices[v] = False if i != starting_index else True
+    pq = MinHeap()
+    starting_vertex = self.graph.get_vertices()[starting_index]
+    pq.build_heap([PrimNode(starting_vertex, 0, e) for e in self.graph.incident_edges(starting_vertex)])
+
+    while not pq.is_empty():
+      pn = pq.pop()
+      if not visited_vertices[pn.destination]:
+        visited_vertices[pn.destination] = True
+        solution_edges.append(pn.edge)
+        for e in self.graph.incident_edges(pn.destination):
+          if not visited_vertices[e.opposite(pn.destination)]:
+            pq.insert(PrimNode(pn.destination, pn.precost + pn.edge.cost, e))
+        
+    
+    return solution_edges
+
+
+
+def build_graph(directed):
+  graph = Graph(directed=directed)
+  for i in range(1, 10):
+    graph.insert_vertex(i)
+  
+  vertices = [None, *graph.get_vertices()]
+  graph.insert_edge(vertices[1], vertices[2], 2)
+  graph.insert_edge(vertices[1], vertices[3], 9)
+  graph.insert_edge(vertices[2], vertices[4], 5)
+  graph.insert_edge(vertices[3], vertices[4], 1)
+  graph.insert_edge(vertices[4], vertices[5], 4)
+  graph.insert_edge(vertices[2], vertices[7], 1)
+  graph.insert_edge(vertices[7], vertices[8], 7)
+  graph.insert_edge(vertices[8], vertices[9], 2)
+  graph.insert_edge(vertices[7], vertices[6], 3)
+  graph.insert_edge(vertices[3], vertices[9], 13)
+  graph.insert_edge(vertices[6], vertices[5], 4)
+  graph.insert_edge(vertices[6], vertices[8], 3)
+
+  return graph
+  
+
 if __name__ == '__main__':
+  # Test TSP problem
   tsp = TSP([(0, 0), (1, 1), (1, 0), (0, 1), (2,2), (3,4), (5,6), (7,8)])
   tsp.DFS()
+
+
+  # Test Dijkstra Algorithm
+  G = build_graph(True)
+  problem = Dijkstra(G, G.get_vertices()[0])
+  solution = problem.solution()
+  for v in solution.values():
+    print(str(v))
+  
+
+  # Test Prim Algorithm
+  G = build_graph(False)
+  problem = PrimJarnik(G)
+  solution = problem.solution()
+  for v in solution:
+    print(str(v))
