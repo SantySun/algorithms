@@ -9,15 +9,15 @@ sys.path.append('.')
 from heap import MinHeap
 
 class Sort:
-    @classmethod
-    def bubble_sort(self, list):
+    @staticmethod
+    def bubble_sort(list):
         for i in range(len(list), 0, -1):
             for j in range(1, i):
                 if list[j - 1] > list[j]:
                     list[j - 1], list[j] = list[j], list[j - 1]
 
-    @classmethod
-    def selection_sort(self, list):
+    @staticmethod
+    def selection_sort(list):
         def _get_max_index(list, start, end):
             assert end > start
             max_index = start
@@ -30,8 +30,8 @@ class Sort:
             max_index = _get_max_index(list, 0, i)
             list[max_index], list[i - 1] = list[i - 1], list[max_index]
 
-    @classmethod
-    def insertion_sort(self, list):
+    @staticmethod
+    def insertion_sort(list):
         for i in range(1, len(list)):
             position = i
             insert_value = list[i]
@@ -40,8 +40,8 @@ class Sort:
                 position = position - 1
             list[position] = insert_value
 
-    @classmethod
-    def quick_sort(self, list):
+    @staticmethod
+    def quick_sort(list):
         def _quick_sort_helper(list, start, end):
             if start < end:
                 left_mark = start + 1
@@ -62,8 +62,8 @@ class Sort:
                 _quick_sort_helper(list, right_mark + 1, end)
         _quick_sort_helper(list, 0, len(list) - 1)
 
-    @classmethod
-    def shell_sort(self, list):
+    @staticmethod
+    def shell_sort(list):
         def _gap_insertion_sort(list, start, gap):
             for i in range(start + gap, len(list), gap):
                 position = i
@@ -78,13 +78,13 @@ class Sort:
                 _gap_insertion_sort(list, start_position, gap)
             gap = gap // 2
 
-    @classmethod
-    def merge_sort(self, list):
+    @staticmethod
+    def merge_sort(list):
         if len(list) > 1:
             left_half = list[len(list)//2:]
             right_half = list[:len(list)//2]
-            self.merge_sort(left_half)
-            self.merge_sort(right_half)
+            Sort.merge_sort(left_half)
+            Sort.merge_sort(right_half)
 
             left_half_index = 0
             right_half_index = 0
@@ -109,8 +109,8 @@ class Sort:
                 list_position = list_position + 1
                 right_half_index = right_half_index + 1
 
-    @classmethod
-    def heap_sort(self, list):
+    @staticmethod
+    def heap_sort(list):
         heap = MinHeap()
         heap.build_heap(list)
         i = 0
